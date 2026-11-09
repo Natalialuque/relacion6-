@@ -1,5 +1,6 @@
 <?php
  abstract class MuebleBase{
+    
     /**
      * VARIABLES
      */
@@ -53,11 +54,40 @@
     }
 
     /**
-     * Metodo get para poder llamar al nombre
+     * Metodo get para poder llamar al fabricante
      * @return string
      */
     public function getFabricante():string{
         return $this->_fabricante;
+    }
+
+    /**
+     * (cadena de máximo 30, por defecto ‘FaMu:’, siempre se añade al principio FaMu: si no lo tiene ya - se recorta a 30 caracteres-),
+     *
+     * @param string $fabricante
+     * @return boolean
+     */
+    public function setFabricante(string $fabricante):bool{
+
+        //debe de empezar por FaMu:
+        if(!str_starts_with($fabricante,"FaMu:")){
+            $fabricante = "FaMu:". $fabricante;
+        }
+
+        //añade al principio FaMu: si no lo tiene ya y se recorta a 30 caracteres.
+        $fabricante = mb_substr($fabricante,0,30);
+        
+        //asignamos
+        $this -> _fabricante=$fabricante;
+        return true;
+    }
+
+    /**
+     * Metodo get para poder llamar al pais
+     * @return string
+     */
+    public function getPais():string{
+        return $this->_pais;
     }
 
     /**
