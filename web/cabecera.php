@@ -26,6 +26,9 @@ spl_autoload_register(function ($clase){
         }
 });
 
+//rutas añadidas si o si
 include(RUTABASE."/aplicacion/plantilla/plantilla.php");
+include(RUTABASE."/aplicacion/clases/curso2026");
+
 
 //creo todos los objetos que necesita mi aplicación

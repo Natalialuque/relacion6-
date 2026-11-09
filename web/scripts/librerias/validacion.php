@@ -186,7 +186,7 @@ function validaEmail(string &$var, string $defecto): bool{
  * @param string $defecto
  * @return boolean
  */
-function validaCadena(string &$var, int $longitud, string $defecto): bool{
+function validaCadena(string &$var, int $longitud, ?string $defecto=null): bool{
 
     //verifica que la longitud no sea mayor y devuelve true
     if(mb_strlen($var) <= $longitud){
