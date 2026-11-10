@@ -316,16 +316,39 @@ include_once(RUTABASE."/scripts/librerias/validacion.php");
     }
 
     /**
-     * Método damePropiedadesAdicionales. Será redefinido en las clases hijas y devolverá 
-     * un array con el nombre de las propiedades adicionales a la clase base.
+     * METODO ABSTRACTO --> damePropiedadesAdicionales. Este metodo podra ser redefinido en las clases hijas y devolverá 
+     * un array con el nombre de las propiedades adicionales a la clase base
+     *
+     * @return array
      */
-
     abstract public function damePropiedadesAdicionales(): array;
 
     /**
-     * Método de clase puedeCrear que devuelve true si se pueden crear más instancias de la
-    * clase y false en caso contrario. Además, devuelve en el parámetro Número el número de
-    *muebles que aún se pueden crear de la clase.
+     * METODO DE CLASE --> puedeCrear que devuelve true si se pueden crear más instancias de la
+     * clase y false en caso contrario. Además, devuelve en el parámetro Número el número de
+     * muebles que aún se pueden crear de la clase.
+     *
+     * @param integer $numero
+     * @return boolean
      */
+    public static function puedeCrear(int &$numero): bool {
+        $numero = self::MAXIMO_MUEBLES - self::$_mueblesCreados;
 
+        if($numero > 0){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * METODO MAGICO _TOSTRING --> Método que al convertir la instancia en cadena nos devuelve 'MUEBLE de clase
+     * XXX con nombre XXX, fabricante XXX, fabricado en XXX a partir del año 999,
+     * vendido desde 99/99/9999 hasta 99/99/9999, precio 9999'
+     */
+    public function __toString(): string{
+        
+        return "MUEBLE de clase ".get_class($this)." con nombre ".$this->_nombre.", fabricante ".$this->_fabricante.
+            ", fabricado en ".$this->_pais." a partir del año ".$this->_anio.", vendido desde ".$this->_fechaIniVenta.
+            " hasta ".$this->_fechaFinVenta.", precio ".$this->_precio;
+    }
 }
