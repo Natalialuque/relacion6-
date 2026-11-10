@@ -13,7 +13,7 @@ if (MODO_TRABAJO=="produccion")
 
 spl_autoload_register(function ($clase){
     //la carga de la carpeta scripts donde tenemos la carpeta clases 
-    $ruta=RUTABASE."/scripts/clases/";
+    $ruta=RUTABASE."/aplicacion/clases/curso2026";
     $fichero=$ruta."$clase.php";
     
     if (file_exists($fichero))
@@ -28,7 +28,6 @@ spl_autoload_register(function ($clase){
 
 //rutas añadidas si o si
 include(RUTABASE."/aplicacion/plantilla/plantilla.php");
-include(RUTABASE."/aplicacion/clases/curso2026");
 
 
 //creo todos los objetos que necesita mi aplicación
