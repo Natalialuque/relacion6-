@@ -24,16 +24,10 @@ function cuerpo()
 {
 ?>
     <br><br>
-     <h3 id="TituloCuerpo">Ejercicios</h3>
-    <ul>
-        
+     <h3 id="TituloCuerpo">Pruebas</h3>
 
-    </ul>   
-        <br><br>
-
-        <h3 id="TituloCuerpo">Pruebas<h3>
     <ul>
-      
+        <li><a href="/aplicacion/principal/pruebas.php">PRUEBAS </a></li> 
 
     </ul>
     

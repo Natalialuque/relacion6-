@@ -81,7 +81,9 @@ final class MuebleReciclado extends MuebleBase{
      * @return string
      */
     public function __toString(): string{
+        
         return parent::__toString(). ", porcentaje reciclado ". $this->_porcentajeReciclado . "%";
+    
     }
 }
 

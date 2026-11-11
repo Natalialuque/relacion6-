@@ -19,6 +19,9 @@ include_once(RUTABASE."/scripts/librerias/validacion.php");
     private string $_fechaFinVenta;
     private float $_precio;
 
+    //añadidmos propiedad privada de tipo caracteristicas 
+    private Caracteristicas $_caracteristicas;
+
    /**
     * __CONSTRUCT --> Pasamos todos los valores teniendo en cuenta que devolveremos errores si algo no funciona y que usaremos los metodos set para asignar los valores
     *
@@ -75,6 +78,9 @@ include_once(RUTABASE."/scripts/librerias/validacion.php");
         }
 
         self::$_mueblesCreados++;
+
+        //lo creamos en el constructor
+        $this->_caracteristicas = new Caracteristicas();
     }
 
     /**
@@ -291,6 +297,15 @@ include_once(RUTABASE."/scripts/librerias/validacion.php");
         return true;
     }
 
+    /**
+     * Metodo get para llamar a caracteristicas
+     *
+     * @return Caracteristicas
+     */
+    public function getCaracteristicas(): Caracteristicas{
+        return $this->_caracteristicas;
+    }
+
 
     /**
      * SOBRECARGA DINAMICA --> La desahibilitamos
@@ -341,14 +356,39 @@ include_once(RUTABASE."/scripts/librerias/validacion.php");
     }
 
     /**
+     * METODO NUEVO DE CLASE --> anadirCaracteristicas que recibirá pares de argumentos en la forma (string
+     * carac, mixed valor) que se corresponden con el nombre de la característica y el valor de
+     *la misma y que añadirá la característica a la propiedad privada.
+     *
+     * @param [mixed] ...$datos
+     * @return void
+     */
+    public function anadirCaracteristicas(mixed ...$datos): void{
+        $total = count($datos);
+
+        // si es impar ignoramos el último
+        if ($total % 2 != 0) {
+            $total--;
+        }
+
+        for ($i = 0; $i < $total; $i += 2) {
+
+            $nombre = $datos[$i];
+            $valor = $datos[$i + 1];
+
+            $this->_caracteristicas->$nombre = $valor;
+        }
+    }
+
+    /**
      * METODO MAGICO _TOSTRING --> Método que al convertir la instancia en cadena nos devuelve 'MUEBLE de clase
      * XXX con nombre XXX, fabricante XXX, fabricado en XXX a partir del año 999,
-     * vendido desde 99/99/9999 hasta 99/99/9999, precio 9999'
+     * vendido desde 99/99/9999 hasta 99/99/9999, precio 9999' + añadidmos lo de caracteristicas 
      */
     public function __toString(): string{
         
         return "MUEBLE de clase ".get_class($this)." con nombre ".$this->_nombre.", fabricante ".$this->_fabricante.
             ", fabricado en ".$this->_pais." a partir del año ".$this->_anio.", vendido desde ".$this->_fechaIniVenta.
-            " hasta ".$this->_fechaFinVenta.", precio ".$this->_precio;
+            " hasta ".$this->_fechaFinVenta.", precio ".$this->_precio.", características: ".$this->_caracteristicas;;
     }
 }

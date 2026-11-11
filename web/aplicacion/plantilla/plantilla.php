@@ -65,7 +65,8 @@ function inicioCuerpo($cabecera,?array $ubicacion = null)
                 <div id="menuPrincipal" >
                     <ul>
                         <li><a href="/index.php">Inicio</a></li>
-                    
+                        <li><a href="../principal/pruebas.php">Pruebas Clases</a></li>
+
 
                     </ul>
 

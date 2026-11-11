@@ -13,8 +13,11 @@ if (MODO_TRABAJO=="produccion")
 
 spl_autoload_register(function ($clase){
     //la carga de la carpeta scripts donde tenemos la carpeta clases 
-    $ruta=RUTABASE."/aplicacion/clases/curso2026";
+    $ruta=RUTABASE."/aplicacion/clases/curso2026/";
     $fichero=$ruta."$clase.php";
+
+    // echo $fichero;
+    // die();
     
     if (file_exists($fichero))
         {
