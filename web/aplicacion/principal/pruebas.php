@@ -26,27 +26,23 @@ function cuerpo()
 ?>
 <h1>PRUEBAS DE LAS CLASES</h1>
 <h4>Mueble Base</h4>
+<p>Al ser clase abstracta y padre, no podemos crear ninguno </p>
 <?php
-
-
 
 ?>
 <h4>Mueble Reciclado</h4>
 <?php
-
-
 
 ?>
 <h4>Caracteristicas</h4>
 <?php
 $c = new Caracteristicas();
 
-$c->color = "rojo";
-$c->peso = 20;
-$c->material = "madera";
-$c->ULTIMA = "casa";
+    $c->color = "rojo";
+    $c->peso = 20;
+    $c->material = "madera";
+    $c->ULTIMA = "casa";
 
 echo $c;
-
 
 }
