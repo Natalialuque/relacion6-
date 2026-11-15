@@ -55,15 +55,15 @@ final class MuebleReciclado extends MuebleBase{
      * @return bool
      */
     public function setPorcentajeReciclado(int $porcentajeReciclado): bool{
-        //verifica que este entre 0 y 100
-        if(!validaRango($porcentajeReciclado,[0,100])){
-            return false;
-        }
 
-        //asignamos
-        $this->_porcentajeReciclado = $porcentajeReciclado;
-        return true;
+    //debe estar entre 0 y 100
+    if ($porcentajeReciclado < 0||$porcentajeReciclado > 100){
+        return false;
     }
+
+    $this->_porcentajeReciclado =$porcentajeReciclado;
+    return true;
+}
 
     /**
      * Devuelve las propiedades adicionales

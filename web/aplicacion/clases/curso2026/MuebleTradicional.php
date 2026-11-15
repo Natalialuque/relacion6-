@@ -65,16 +65,13 @@ final class MuebleTradicional extends MuebleBase{
      * @param float $peso
      * @return bool
      */
-    public function setPeso(float $peso): bool{
+   public function setPeso(float $peso): bool{
+    if ($peso < 15 || $peso > 300){
+        return false;
+    }
 
-        //validamos el rango entre 15 y 300
-        if(!validaRango($peso,[15,300])){
-            return false;
-        }
-
-        //Asignamos 
-        $this->_peso = $peso;
-        return true;
+    $this->_peso = $peso;
+    return true;
     }
 
 
