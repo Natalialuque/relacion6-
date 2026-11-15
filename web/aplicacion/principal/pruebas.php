@@ -28,9 +28,13 @@ function cuerpo()
 <h4>Mueble Base</h4>
 <?php
 
+
+
 ?>
 <h4>Mueble Reciclado</h4>
 <?php
+
+
 
 ?>
 <h4>Caracteristicas</h4>
