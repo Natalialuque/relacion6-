@@ -9,7 +9,7 @@ $ubicacion = [
     "TIENDA" => "TIENDA"
 ];
 
-//CONTROLADOR                                                  
+//CONTROLADOR
 
 //datos vista
 $datos = [
@@ -23,7 +23,7 @@ $errores = [];
 $objMueble = null;
 
 /**
- * 
+ *
  */
 if ($_SERVER["REQUEST_METHOD"] === "POST"){
     $indice = (int)($_POST["mueble"] ?? 0);
@@ -51,6 +51,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST"){
         header("Location: modifica.php?mueble=". urlencode($indice));
         exit;
     }
+
+
 }
 
 inicioCabecera("APLICACION PRIMER TRIMESTRE");
@@ -60,7 +62,7 @@ inicioCuerpo("TIENDA",$ubicacion);
 cuerpo($muebles,$datos,$errores,$objMueble);
 finCuerpo();
 //**********************************************************
-//vista cabecera donde podemos ver otros enlaces 
+//vista cabecera donde podemos ver otros enlaces
 
 //cabecera
 function cabecera(){}
@@ -70,7 +72,7 @@ function cabecera(){}
  * Vista principal
  */
 function cuerpo(array $muebles,array $datos,array $errores,$objMueble){
-    
+
     tablaMuebles($muebles);
 
     echo "<br>";
@@ -125,9 +127,7 @@ function formulario(array $muebles,array $datos,array $errores){
                 value="<?= $indice ?>"
 
                 <?= ($datos["mueble"] == $indice)? "selected": ""?>>
-
                 <?= $indice ?>
-                
                 <?= $mueble->getNombre() ?>
 
             </option>
@@ -143,13 +143,15 @@ function formulario(array $muebles,array $datos,array $errores){
 
     <input type="submit"name="modificar"value="Modificar Mueble">
 
+
+
 </form>
 
 <?php
 }
 
 /**
- * FUNCION QUE TE PINTA LA TABLA MUEBLES 
+ * FUNCION QUE TE PINTA LA TABLA MUEBLES
  *
  * @param array $muebles
  * @return void
@@ -170,6 +172,9 @@ function tablaMuebles(array $muebles)
         <th>Fecha Inicio</th>
         <th>Fecha Fin</th>
         <th>Precio</th>
+        <th>Material</th>
+
+
     </tr>
 
 <?php
@@ -197,6 +202,11 @@ foreach ($muebles as $indice => $mueble)
         <td><?= $mueble->getFechaFinVenta() ?></td>
 
         <td><?= $mueble->getPrecio() ?> €</td>
+
+        <!-- PARA MOSTRAR EN LA TABLA LA DESCRIPCION DEL MATERIAL -->
+        <td><?= $mueble->getMaterialesDescripcion()?></td>
+
+
 
     </tr>
 
@@ -235,4 +245,9 @@ function mostrarMueble($mueble)
     echo "<p>Precio: " .
             $mueble->getPrecio() .
             " €</p>";
+
+    //PARA MOSTRAR EN LA DESCRIPCION EL MATERIAL
+     echo "<p>Material: " .
+            $mueble->getMaterialesDescripcion().
+            "</p>";
 }

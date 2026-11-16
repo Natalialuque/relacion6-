@@ -22,6 +22,9 @@ include_once(RUTABASE."/scripts/librerias/validacion.php");
     //añadidmos propiedad privada de tipo caracteristicas 
     private Caracteristicas $_caracteristicas;
 
+    //variable nueva de materiales
+    public Materiales $_material;
+
    /**
     * __CONSTRUCT --> Pasamos todos los valores teniendo en cuenta que devolveremos errores si algo no funciona y que usaremos los metodos set para asignar los valores
     *
@@ -31,11 +34,12 @@ include_once(RUTABASE."/scripts/librerias/validacion.php");
     * @param integer $anio
     * @param string $fechaIniVenta
     * @param string $fechaFinVenta
-    * @param integer $precio
+    * @param float $precio
+    * @param int $materiales
     */
     public function __construct(string $nombre,string $fabricante = "FaMu:",string $pais = "ESPAÑA",
                                 int $anio = 2020,string $fechaIniVenta = "01/01/2020",
-                                string $fechaFinVenta = "31/12/2040",float $precio = 30)
+                                string $fechaFinVenta = "31/12/2040",float $precio = 30,int $material=10)
     {
         //no se pueden crear más muebles
         if (self::$_mueblesCreados >= self::MAXIMO_MUEBLES) {
@@ -81,6 +85,12 @@ include_once(RUTABASE."/scripts/librerias/validacion.php");
 
         //lo creamos en el constructor
         $this->_caracteristicas = new Caracteristicas();
+
+        //asignamos que tenga por defecto el numero 10, cogiendo claramente el material que le corresponde
+        if(!$this->setMaterial($material)){
+            $this-> setMaterial(10);
+        }
+
     }
 
     /**
@@ -306,6 +316,34 @@ include_once(RUTABASE."/scripts/librerias/validacion.php");
         return $this->_caracteristicas;
     }
 
+    /**
+     * Metodo get que devuelve la cadena con la descripcion del material 
+     *
+     * @return string
+     */
+    public function getMaterialesDescripcion():string{
+        return $this -> _material->descripcion();
+    }
+
+    /**
+     * Funcion set con la que vamos a poder meter el valor por defecto a 10
+     *
+     * @param integer $valor
+     * @return boolean
+     */
+    public function setMaterial(int $valor): bool{
+    
+    $bool = false; 
+        $arraEnu = Materiales::casos();
+        for($i=0; $i< count($arraEnu);$i++){
+            if($arraEnu[$i]->valor()==$valor){
+                $this->_material =$arraEnu[$i];
+                $bool = true; 
+            }
+        }
+        return $bool;
+    }
+
 
     /**
      * SOBRECARGA DINAMICA --> La desahibilitamos
@@ -380,15 +418,21 @@ include_once(RUTABASE."/scripts/librerias/validacion.php");
         }
     }
 
+   
     /**
      * METODO MAGICO _TOSTRING --> Método que al convertir la instancia en cadena nos devuelve 'MUEBLE de clase
      * XXX con nombre XXX, fabricante XXX, fabricado en XXX a partir del año 999,
      * vendido desde 99/99/9999 hasta 99/99/9999, precio 9999' + añadidmos lo de caracteristicas 
+     * 
+     * Añadimos que muestre la descripcion del material 
+     *
+     * @return string
      */
     public function __toString(): string{
         
         return "MUEBLE de clase ".get_class($this)." con nombre ".$this->_nombre.", fabricante ".$this->_fabricante.
             ", fabricado en ".$this->_pais." a partir del año ".$this->_anio.", vendido desde ".$this->_fechaIniVenta.
-            " hasta ".$this->_fechaFinVenta.", precio ".$this->_precio.", características: ".$this->_caracteristicas;;
+            " hasta ".$this->_fechaFinVenta.", precio ".$this->_precio.", características: ".$this->_caracteristicas . 
+            " de material ". $this->_material->descripcion() ;
     }
 }

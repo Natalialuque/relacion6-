@@ -10,6 +10,8 @@ class Caracteristicas implements iterator{
     private bool $bloqueado = false;
     // Array usado para recorrer en sentido inverso
     private array $iteracion = [];
+    //nueva caracteristica, la cual vamos llamar ahora 
+    private int $numero_serie;
 
     //Posición actual del iterador
     private int $posicion = 0;
@@ -27,6 +29,7 @@ class Caracteristicas implements iterator{
         if (!isset($this->carac[$nombre])) {
         
         throw new Exception("No existe la característica $nombre");
+
     }
 
     }

@@ -14,22 +14,30 @@ $errores = [];
 $resumen = false;
 
 /*
- * Recuperamos el mueble enviado desde index.php
+ * Recuperamos el mueble enviado desde index.php mediante su indice
  */
 $indice = (int)($_GET["mueble"] ?? 0);
 
-if (!isset($muebles[$indice]))
-{
-    die("Mueble no encontrado");
+$mueble = null;
+
+if (array_key_exists($indice, $muebles)) {
+    $mueble = $muebles[$indice];
+}
+else {
+    $errores[] = "Mueble no encontrado";
 }
 
-$mueble = $muebles[$indice];
 
 /*
- * Procesamiento del formulario
+ * Hacemos que el formulario funcione unicamente cuando-->
+ * - Se ha enviado por método POST
+ * - Existe un mueble válido sobre el que trabajar
  */
-if ($_SERVER["REQUEST_METHOD"] === "POST")
-{
+if ($_SERVER["REQUEST_METHOD"] === "POST" && $mueble !== null) {
+
+    /*
+     * Recogida de datos del formulario
+     */
     $nombre = trim($_POST["nombre"]);
     $fabricante = trim($_POST["fabricante"]);
     $pais = trim($_POST["pais"]);
@@ -39,85 +47,81 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
     $precio = (float)$_POST["precio"];
 
     /*
-     * Validaciones directas
+     * Validaciones realizadas directamente mediante condiciones
      */
 
-    if ($nombre == ""){
+    if ($nombre == "") {
         $errores[] = "Nombre obligatorio";
     }
 
-    if ($anio < 2020){
+    if ($anio < 2020) {
         $errores[] = "Año incorrecto";
     }
 
-    if ($precio < 30){
+    if ($precio < 30) {
         $errores[] = "Precio incorrecto";
     }
 
     /*
-     * Validaciones mediante setters
+     * Validaciones realizadas utilizando los métodos set de la clase
      */
 
-    if (!$mueble->setFabricante($fabricante)){
+    if (!$mueble->setFabricante($fabricante)) {
         $errores[] = "Fabricante incorrecto";
     }
 
-    if (!$mueble->setPais($pais)){
+    if (!$mueble->setPais($pais)) {
         $errores[] = "Pais incorrecto";
     }
 
-    if (!$mueble->setFechaIniVenta($fechaIni)){
+    if (!$mueble->setFechaIniVenta($fechaIni)) {
         $errores[] = "Fecha inicio incorrecta";
     }
 
-    if (!$mueble->setFechaFinVenta($fechaFin)){
+    if (!$mueble->setFechaFinVenta($fechaFin)) {
         $errores[] = "Fecha fin incorrecta";
     }
 
     /*
-     * Si no hay errores actualizamos
+     * Si no hay errores actualizamos las propiedades comunes del mueble
      */
+    if (empty($errores)) {
 
-    if (empty($errores)){
         $mueble->setNombre($nombre);
         $mueble->setAnio($anio);
         $mueble->setPrecio($precio);
 
         /*
-         * Propiedades especificas
+         * Validación y actualización de propiedades específicas según el tipo de mueble
          */
 
-        if ($mueble instanceof MuebleReciclado){
-            $porcentaje =
-                (int)$_POST["porcentaje"];
+        if ($mueble instanceof MuebleReciclado) {
 
-            if (!$mueble->setPorcentajeReciclado(
-                    $porcentaje))
-            {
-                $errores[] =
-                    "Porcentaje incorrecto";
+            $porcentaje = (int)$_POST["porcentaje"];
+
+            if (!$mueble->setPorcentajeReciclado($porcentaje)) {
+                $errores[] = "Porcentaje incorrecto";
             }
         }
 
-        if ($mueble instanceof MuebleTradicional){
-            $peso =
-                (float)$_POST["peso"];
+        if ($mueble instanceof MuebleTradicional) {
 
-            $serie =
-                trim($_POST["serie"]);
+            $peso = (float)$_POST["peso"];
+            $serie = trim($_POST["serie"]);
 
             if (!$mueble->setPeso($peso)) {
-                $errores[] =
-                    "Peso incorrecto";
+                $errores[] = "Peso incorrecto";
             }
 
-            if (!$mueble->setSerie($serie)){
-                $errores[] =
-                    "Serie incorrecta";
+            if (!$mueble->setSerie($serie)) {
+                $errores[] = "Serie incorrecta";
             }
         }
 
-        if (empty($errores)){
+        /*
+         * Si después de todas las comprobaciones sigue sin haber errores, activamos el resumen
+         */
+        if (empty($errores)) {
             $resumen = true;
         }
     }
@@ -129,162 +133,176 @@ inicioCabecera("APLICACION PRIMER TRIMESTRE");
 cabecera();
 finCabecera();
 inicioCuerpo("TIENDA", $ubicacion);
-cuerpo($mueble,$errores,$resumen);
+if ($mueble !== null) {
+    cuerpo($mueble, $errores, $resumen);
+}
+else {
+    mostrarErrores($errores);
+}
 finCuerpo();
 
 
-function cabecera()
-{
+function cabecera(){
 }
 
-function cuerpo($mueble,array $errores,bool $resumen){
+/**
+ * FUNCION CUERPO --> Se encarga de recoger las funciones de errore, formulario y resumen
+ *
+ * @param [type] $mueble
+ * @param array $errores
+ * @param boolean $resumen
+ * @return void
+ */
+function cuerpo($mueble, array $errores, bool $resumen){
 ?>
-<h2>Modificar Mueble</h2>
-<?php
-//funcion para los errores
-if (!empty($errores)){
-    echo "<div class='error'>";
+    <h2>Modificar Mueble</h2>
 
-    foreach ($errores as $error){
-        echo $error . "<br>";
+<?php
+    mostrarErrores($errores);
+
+    formularioMueble($mueble);
+
+    if ($resumen) {
+        resumenMueble($mueble);
     }
-
-    echo "</div>";
 }
 
+/**
+* FUNCION ERRORES --> Se encarga de mostrar los errores que se crean cuando hay datos incorrectos en el formulario 
+*
+* @param array $errores
+* @return void
+*/
+function mostrarErrores(array $errores): void{
+    if (!empty($errores)) {
+        echo "<div class='error'>";
+
+        foreach ($errores as $error) {
+            echo $error . "<br>";
+        }
+        echo "</div>";
+    }
+}
+
+/**
+ * FUNCION FORMULARIO --> Esta funcion mediante metodo post nos muestra un formulario modificlable con los datos del mueble selecionado
+ *
+ * @param [type] $mueble
+ * @return void
+ */
+function formularioMueble($mueble): void{
 ?>
-<!-- formulario con cada uno de los apartados a modificar -->
-<form method="POST">
+    <form method="POST">
 
-    <label>Nombre</label>
-    <input
-        type="text"
-        name="nombre"
-        value="<?= $mueble->getNombre() ?>">
+        <label>Nombre</label>
+        <input type="text" name="nombre" value="<?= $mueble->getNombre() ?>">
 
-    <br><br>
+        <br><br>
 
-    <label>Fabricante</label>
-    <input
-        type="text"
-        name="fabricante"
-        value="<?= $mueble->getFabricante() ?>">
+        <label>Fabricante</label>
+        <input type="text" name="fabricante" value="<?= $mueble->getFabricante() ?>">
 
-    <br><br>
+        <br><br>
 
-    <label>Pais</label>
-    <input
-        type="text"
-        name="pais"
-        value="<?= $mueble->getPais() ?>">
+        <label>Pais</label>
+        <input type="text" name="pais" value="<?= $mueble->getPais() ?>">
 
-    <br><br>
+        <br><br>
 
-    <label>Año</label>
-    <input
-        type="number"
-        name="anio"
-        value="<?= $mueble->getAnio() ?>">
+        <label>Año</label>
+        <input type="number" name="anio" value="<?= $mueble->getAnio() ?>">
 
-    <br><br>
+        <br><br>
 
-    <label>Fecha inicio venta</label>
-    <input
-        type="text"
-        name="fechaIni"
-        value="<?= $mueble->getFechaIniVenta() ?>">
+        <label>Fecha inicio venta</label>
+        <input type="text" name="fechaIni" value="<?= $mueble->getFechaIniVenta() ?>">
 
-    <br><br>
+        <br><br>
 
-    <label>Fecha fin venta</label>
-    <input
-        type="text"
-        name="fechaFin"
-        value="<?= $mueble->getFechaFinVenta() ?>">
+        <label>Fecha fin venta</label>
+        <input type="text" name="fechaFin" value="<?= $mueble->getFechaFinVenta() ?>">
 
-    <br><br>
+        <br><br>
 
-    <label>Precio</label>
-    <input
-        type="number"
-        name="precio"
-        value="<?= $mueble->getPrecio() ?>">
+        <label>Precio</label>
+        <input type="number" name="precio" value="<?= $mueble->getPrecio() ?>">
+        
+        <br><br>
 
-    <br><br>
+        <label>Material</label>
+        <input type="text" name="material" value="<?= $mueble->getMaterialesDescripcion() ?>">
 
-<?php
-/**en el caso de que estemos en un mueble reciclado debe aparece tambien el porcentaje */
-if ($mueble instanceof MuebleReciclado){
-?>
-    <label>Porcentaje reciclado</label>
+        <br><br>
 
-    <input
-        type="number"
-        name="porcentaje"
-        value="<?= $mueble->getPorcentajeReciclado() ?>">
+    <?php
+        //Para mostrar cuando es mueble reciclado
+        if ($mueble instanceof MuebleReciclado) {
+    ?>
+            <label>Porcentaje reciclado</label>
+            <input type="number" name="porcentaje" value="<?= $mueble->getPorcentajeReciclado() ?>">
 
-    <br><br>
+            <br><br>
+    <?php
+        }
 
+        //Para mostrar cuando es mueble tradiconal
+        if ($mueble instanceof MuebleTradicional) {
+    ?>
+            <label>Peso</label>
+            <input type="number" name="peso" value="<?= $mueble->getPeso() ?>">
+
+            <br><br>
+
+            <label>Serie</label>
+            <input type="text" name="serie" value="<?= $mueble->getSerie() ?>">
+
+            <br><br>
+    <?php
+        }
+    ?>
+
+        <input type="submit" value="Modificar Mueble">
+
+    </form>
 <?php
 }
-/**En el cado de que estemos en un mueble tradicional debe aparecer peso y serie */
-if ($mueble instanceof MuebleTradicional){
-?>
 
-    <label>Peso</label>
-
-    <input
-        type="number"
-        name="peso"
-        value="<?= $mueble->getPeso() ?>">
-
-    <br><br>
-
-    <label>Serie</label>
-
-    <input
-        type="text"
-        name="serie"
-        value="<?= $mueble->getSerie() ?>">
-
-    <br><br>
-
-<?php
-}
-?>
-
-    <input
-        type="submit"
-        value="Modificar Mueble">
-
-</form>
-
-<?php
-/**Resumen final de los datos a mostrar */
-if ($resumen){
+/**
+ * FUNCION RESUMEN --> Esta funcion es la que muestra un resumen del mueble una vez los campos modificados son validos
+ *
+ * @param [type] $mueble
+ * @return void
+ */
+function resumenMueble($mueble): void{
     echo "<h2>Resumen</h2>";
 
-    echo "<p>Nombre: "
-        . $mueble->getNombre()
-        . "</p>";
+    echo "<p>Nombre: " . $mueble->getNombre() . "</p>";
+    echo "<p>Fabricante: " . $mueble->getFabricante() . "</p>";
+    echo "<p>Pais: " . $mueble->getPais() . "</p>";
+    echo "<p>Año: " . $mueble->getAnio() . "</p>";
+    echo "<p>Precio: " . $mueble->getPrecio() . "</p>";
+    echo "<p>Materiales: " . $mueble->getMaterialesDescripcion() . "</p>";
 
 
-    echo "<p>Fabricante: "
-        . $mueble->getFabricante()
-        . "</p>";
+    /**
+     * Si el mueble es reciclado hay que tener en cuenta que tenemos una variable mas de porcentaje 
+     */
+    if ($mueble instanceof MuebleReciclado) {
+        echo "<p>Porcentaje reciclado: "
+            . $mueble->getPorcentajeReciclado()
+            . "</p>";
+    }
 
-    echo "<p>Pais: "
-        . $mueble->getPais()
-        . "</p>";
+    /**
+     * Si el mueble es tradiciconal hay que tener en cuenta que tenemos dos variables mas de peso y serie
+     */
+    if ($mueble instanceof MuebleTradicional) {
+        echo "<p>Peso: "
+            . $mueble->getPeso()
+            . "</p>";
 
-    echo "<p>Año: "
-        . $mueble->getAnio()
-        . "</p>";
-
-    echo "<p>Precio: "
-        . $mueble->getPrecio()
-        . "</p>";
-
-}
-
+        echo "<p>Serie: "
+            . $mueble->getSerie()
+            . "</p>";
+    }
 }
